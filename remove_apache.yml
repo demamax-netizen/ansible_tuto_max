@@ -2,16 +2,11 @@
 - hosts: all
   become: true
   tasks:
-    - name: update repository index
-      apt:
+
+    - name: Remove apache and php packages
+      package:
+        name: 
+        - "{{ apache_package_name }}"
+        - "{{ php_package_name }}"
+        state: absent
         update_cache: yes
-
-    - name: remove apache2 package
-      apt:
-        name: apache2
-        state: absent
-
-    - name: add php support for apache
-      apt:
-        name: libapache2-mod-php
-        state: absent

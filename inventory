@@ -1,3 +1,8 @@
-10.4.8.131
-10.4.8.132
-10.4.8.133
+[web_servers]
+10.4.8.131 apache_package_name=apache2 php_package_name=libapache2-mod-php
+
+[db_servers]
+10.4.8.132 apache_package_name=apache2 php_package_name=libapache2-mod-php
+
+[file_servers]
+10.4.8.133 apache_package_name=apache2 php_package_name=libapache2-mod-php
