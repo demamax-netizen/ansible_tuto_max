@@ -1,0 +1,6 @@
+- name: install maria db server package
+  tags: mariadb
+  package:
+    name: mariadb-server
+    state: latest
+    update_cache: yes

@@ -1,0 +1,19 @@
+- name: install unzip package
+  tags: always
+  apt:
+    name: unzip
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: install terraform
+  tags: terraform
+  unarchive:
+    src: https://releases.hashicorp.com/terraform/1.14.5/terraform_1.14.5_linux_amd64.zip
+    dest: /usr/local/bin/
+    remote_src: yes
+    mode: '0755'
+    owner: root
+    group: root
+  when: ansible_distribution == "Ubuntu"
+

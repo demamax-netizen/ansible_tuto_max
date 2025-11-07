@@ -1,95 +1,25 @@
 ---
 - hosts: all
   become: true
-  pre_tasks:
-  - name: updates repo cache (Ubuntu)
-    tags: always
-    apt:
-      update_cache: yes
-    changed_when: false
-    when: ansible_distribution == "Ubuntu" 
+  roles:
+    - base
 
 - hosts: workstations
   become: true
-  tasks:
-    - name: install unzip package
-      tags: always
-      apt:
-        name: unzip
-        state: present
-        update_cache: yes
-      when: ansible_distribution == "Ubuntu"
-
-    - name: install terraform
-      tags: terraform
-      unarchive:
-        src: https://releases.hashicorp.com/terraform/1.14.5/terraform_1.14.5_linux_amd64.zip
-        dest: /usr/local/bin/
-        remote_src: yes
-        mode: '0755'
-        owner: root
-        group: root
-      when: ansible_distribution == "Ubuntu"
+  roles:
+    - workstations
 
 - hosts: web_servers
   become: true
-  tasks:
-    - name: install apache and php packages
-      tags: apache,php
-      package:
-        name: 
-        - "{{ apache_package_name }}"
-        - "{{ php_package_name }}"
-        state: latest
-        update_cache: yes
-
-    - name : start and enable apache service
-      tags: apache,httpd
-      service:
-        name: "{{ apache_package_name }}"
-        state: started
-        enabled: yes
-
-    - name: change adress in apache config file
-      tags: apache,httpd
-      replace:
-        path: /etc/apache2/sites-available/000-default.conf
-        regexp: '(\s*ServerAdmin\s+)(.*)$'
-        replace: '\1demamax@gmail.com'
-      register: apache_config_change
-
-    - name: restart apache service
-      tags: apache,httpd
-      service:
-        name: "{{ apache_package_name }}"
-        state: restarted
-      when: apache_config_change.changed 
-
-    - name: copy default html file for site
-      tags: apache,httpd
-      copy:
-        src: files/default_site.html
-        dest: /var/www/html/index.html
-        owner: root
-        group: root
-        mode: '0644'
+  roles:
+    - web_servers
 
 - hosts: db_servers
   become: true
-  tasks:
-    - name: install maria db server package
-      tags: mariadb
-      package:
-        name: mariadb-server
-        state: latest
-        update_cache: yes
+  roles:
+    - db_servers
 
 - hosts: file_servers
   become: true
-  tasks:
-    - name: install samba package
-      tags: samba
-      package:
-        name: samba
-        state: latest
-        update_cache: yes
+  roles:
+    - file_servers

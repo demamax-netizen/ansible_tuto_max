@@ -1,0 +1,40 @@
+- name: install apache and php packages
+  tags: apache,php
+  package:
+    name: 
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
+    state: latest
+    update_cache: yes
+
+- name : start and enable apache service
+  tags: apache,httpd
+  service:
+      name: "{{ apache_package_name }}"
+      state: started
+      enabled: yes
+
+- name: change adress in apache config file
+  tags: apache,httpd
+  replace:
+    path: /etc/apache2/sites-available/000-default.conf
+    regexp: '(\s*ServerAdmin\s+)(.*)$'
+    replace: '\1demamax@gmail.com'
+  register: apache_config_change
+
+- name: restart apache service
+  tags: apache,httpd
+  service:
+    name: "{{ apache_package_name }}"
+    state: restarted
+  when: apache_config_change.changed
+
+- name: copy default html file for site
+  tags: apache,httpd
+  copy:
+    src: files/default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: '0644'
+    
